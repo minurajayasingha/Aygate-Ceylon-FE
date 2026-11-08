@@ -1,0 +1,517 @@
+/* Design tokens: every value here comes from the Figma "Web" page. Change a brand value here, nowhere else. */
+@import 'tailwindcss';
+
+@theme {
+  --breakpoint-lg: 1024px;
+
+  --color-gold: #c48c40;
+  --color-gold-deep: #c37002;
+  --color-gold-muted: #a27435;
+  --color-cream: #fff4e8;
+  --color-ivory: #fffbed;
+  --color-ink: #000000;
+  --color-muted: #8e8e8e;
+  --color-placeholder: #696969;
+  --color-field: rgb(222 221 221 / 0.37);
+  --color-field-glass: rgb(255 255 255 / 0.48);
+  --color-glass: rgb(15 14 14 / 0.3);
+  --color-veil: rgb(255 244 232 / 0.9);
+
+  --font-serif: 'Cormorant Garamond', Georgia, serif;
+  --font-sans: 'DM Sans', system-ui, sans-serif;
+
+  /* Headings: Cormorant Garamond */
+  --text-display: 64px;
+  --text-display--line-height: 65px;
+  --text-h1: 55px;
+  --text-h1--line-height: 56px;
+  --text-h2: 50px;
+  --text-h2--line-height: 50px;
+  --text-h2-m: 48px;
+  --text-h2-m--line-height: 48px;
+  --text-h3: 32px;
+  --text-h3--line-height: 32px;
+  --text-stat: 22px;
+  --text-stat--line-height: 22px;
+  --text-h4: 21px;
+  --text-h4--line-height: 21px;
+  --text-h5: 20px;
+  --text-h5--line-height: 26px;
+
+  /* Body: DM Sans */
+  --text-p1: 18px;
+  --text-p1--line-height: 23px;
+  --text-p2: 16px;
+  --text-p2--line-height: 21px;
+  --text-p3: 15px;
+  --text-p3--line-height: 19px;
+  --text-p4: 14px;
+  --text-p4--line-height: 18px;
+  --text-p5: 13px;
+  --text-p5--line-height: 17px;
+  --text-p6: 12px;
+  --text-p6--line-height: 15px;
+  --text-p7: 11px;
+  --text-p7--line-height: 14px;
+  --text-p8: 10px;
+  --text-p8--line-height: 13px;
+  --text-p9: 8px;
+  --text-p9--line-height: 10px;
+
+  --radius-control: 5px;
+  --radius-field: 8px;
+  --radius-panel: 12px;
+  --radius-card: 19px;
+  --radius-chip: 22px;
+  --radius-feature: 28px;
+
+  --shadow-card: 0 4px 4px rgb(0 0 0 / 0.25);
+  --shadow-feature: 7px 4px 12.3px rgb(0 0 0 / 0.15);
+  --shadow-soft: 0 0 4px rgb(0 0 0 / 0.25);
+}
+
+html {
+  background: var(--color-cream);
+}
+
+body {
+  font-family: var(--font-sans);
+  color: var(--color-ink);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+/* In the base layer so Tailwind transition utilities and .btn can override it. */
+@layer base {
+  a,
+  button {
+    cursor: pointer;
+    transition: color 250ms, background-color 250ms, border-color 250ms, opacity 250ms;
+  }
+}
+
+/* Buttons (see Button.tsx): on hover a darker fill sweeps in left to right and
+   leaves to the right, the button lifts with a soft gold glow, and the arrow slides
+   out and back in. Pressing pushes it down. Hover effects only on real pointers. */
+@layer components {
+  .btn {
+    --btn-ease: cubic-bezier(0.65, 0, 0.35, 1);
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    transition:
+      color 450ms var(--btn-ease),
+      border-color 450ms var(--btn-ease),
+      box-shadow 450ms cubic-bezier(0.22, 1, 0.36, 1),
+      translate 450ms cubic-bezier(0.22, 1, 0.36, 1),
+      scale 450ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: var(--btn-fill);
+    transform: scaleX(0);
+    transform-origin: right center;
+    transition: transform 550ms var(--btn-ease);
+  }
+  .btn-primary {
+    --btn-fill: var(--color-gold-deep);
+    --btn-glow: rgb(195 112 2 / 0.45);
+  }
+  .btn-outline {
+    --btn-fill: var(--color-gold-deep);
+    --btn-glow: rgb(195 112 2 / 0.35);
+  }
+  .btn-outline-light {
+    --btn-fill: #fff;
+    --btn-glow: rgb(255 255 255 / 0.3);
+  }
+
+  @media (hover: hover) {
+    /* translate/scale, not transform, so they stack with the hero reveal animation. */
+    .btn:hover {
+      translate: 0 -2px;
+      box-shadow: 0 10px 22px -10px var(--btn-glow);
+    }
+    .btn:hover::before {
+      transform: scaleX(1);
+      transform-origin: left center;
+    }
+    .btn:hover .btn-arrow {
+      animation: btn-arrow 650ms var(--btn-ease);
+    }
+  }
+  .btn:active {
+    translate: 0 0;
+    scale: 0.97;
+    box-shadow: 0 4px 10px -6px var(--btn-glow);
+    transition-duration: 120ms;
+  }
+
+  /* Hover-arrow button: the bar morphs into a pill, label fades, arrow glides in. */
+  .btn-morph {
+    transition:
+      width 500ms cubic-bezier(0.65, 0, 0.35, 1),
+      height 500ms cubic-bezier(0.65, 0, 0.35, 1),
+      border-radius 500ms cubic-bezier(0.65, 0, 0.35, 1),
+      background-color 400ms ease,
+      box-shadow 400ms ease,
+      scale 150ms ease;
+  }
+  .group:hover .btn-morph {
+    box-shadow: 0 8px 18px -8px rgb(195 112 2 / 0.5);
+  }
+  .group:active .btn-morph {
+    scale: 0.94;
+  }
+  .btn-morph-label {
+    white-space: nowrap;
+    transition:
+      opacity 220ms ease,
+      scale 300ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .btn-morph-arrow {
+    translate: -10px 0;
+    transition:
+      opacity 300ms ease 150ms,
+      translate 450ms cubic-bezier(0.22, 1, 0.36, 1) 150ms;
+  }
+}
+
+/* Text links (header nav, footer): a gold underline sweeps in left to right and
+   leaves to the right, matching the button fill. .link-nudge also slides the link
+   a few px right. Icons (.icon-lift) rise like the buttons. */
+@layer components {
+  .link-sweep {
+    --link-ease: cubic-bezier(0.65, 0, 0.35, 1);
+    position: relative;
+    display: inline-block;
+    transition:
+      color 450ms var(--link-ease),
+      translate 450ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .link-sweep::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -3px;
+    height: 1px;
+    background: currentColor;
+    transform: scaleX(0);
+    transform-origin: right center;
+    transition: transform 500ms var(--link-ease);
+  }
+  .icon-lift {
+    transition:
+      color 400ms ease,
+      translate 400ms cubic-bezier(0.22, 1, 0.36, 1),
+      scale 150ms ease;
+  }
+  @media (hover: hover) {
+    .link-sweep:hover::after {
+      transform: scaleX(1);
+      transform-origin: left center;
+    }
+    .link-nudge:hover {
+      translate: 4px 0;
+    }
+    .icon-lift:hover {
+      translate: 0 -2px;
+    }
+  }
+  .icon-lift:active {
+    translate: 0 0;
+    scale: 0.9;
+  }
+}
+
+@keyframes btn-arrow {
+  0% {
+    transform: none;
+  }
+  45% {
+    transform: translateX(14px);
+    opacity: 0;
+  }
+  46% {
+    transform: translateX(-14px);
+    opacity: 0;
+  }
+  100% {
+    transform: none;
+    opacity: 1;
+  }
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-gold);
+  outline-offset: 2px;
+}
+
+.no-scrollbar {
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Page change (see PageTransition.tsx): old and new page share one grid cell.
+   New hero wipes in left to right; old content below it drops away; new content
+   comes down from the top. Total length must match DURATION_MS (1000ms). */
+.pt-stage {
+  display: grid;
+}
+.pt-layer {
+  grid-area: 1 / 1;
+  min-width: 0;
+}
+.pt-out {
+  z-index: 0;
+  pointer-events: none;
+}
+.pt-in {
+  z-index: 1;
+}
+.pt-out header {
+  visibility: hidden;
+}
+
+/* Old page: everything below the hero slides down and fades. */
+.pt-out main > :not([data-hero]),
+.pt-out footer {
+  animation: pt-drop-out 260ms cubic-bezier(0.33, 0, 0.67, 1) both;
+}
+/* Old hero stays under the wipe, then clears any part the new hero does not cover. */
+.pt-out [data-hero] {
+  animation: pt-fade-out 250ms ease-out 650ms both;
+}
+
+/* New hero: wipe left to right, picture settling from a slight zoom. */
+.pt-in [data-hero] {
+  z-index: 2;
+  animation: pt-wipe 900ms cubic-bezier(0.77, 0, 0.18, 1) both;
+}
+.pt-in [data-hero] img {
+  animation: pt-settle 1000ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* New content: comes down from the top. */
+.pt-in main > :not([data-hero]),
+.pt-in footer {
+  animation: pt-drop-in 650ms cubic-bezier(0.22, 1, 0.36, 1) 250ms both;
+}
+/* Cream backing so it covers what is leaving; in the base layer so section bg utilities still win. */
+@layer base {
+  .pt-in main > :not([data-hero]) {
+    background-color: var(--color-cream);
+  }
+}
+
+@keyframes pt-wipe {
+  from {
+    clip-path: inset(0 100% 0 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+@keyframes pt-settle {
+  from {
+    transform: scale(1.08);
+  }
+  to {
+    transform: none;
+  }
+}
+@keyframes pt-fade-out {
+  to {
+    opacity: 0;
+  }
+}
+@keyframes pt-drop-out {
+  to {
+    opacity: 0;
+    transform: translateY(60px);
+  }
+}
+@keyframes pt-drop-in {
+  from {
+    opacity: 0;
+    transform: translateY(-60px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Hero intro (see Hero.tsx): eyebrow and title type in, then body and buttons rise. */
+.hero-caret {
+  animation: hero-blink 900ms steps(1) infinite;
+}
+[data-reveal='off'],
+[data-reveal-items='off'] > * {
+  opacity: 0;
+}
+[data-reveal='on'],
+[data-reveal-items='on'] > * {
+  animation: hero-rise 700ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+[data-reveal-items='on'] > * {
+  animation-delay: 220ms;
+}
+[data-reveal-items='on'] > :nth-child(2) {
+  animation-delay: 340ms;
+}
+@keyframes hero-blink {
+  50% {
+    opacity: 0;
+  }
+}
+@keyframes hero-rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/*
+ * Scroll reveal (see useInView.ts / SlideIn.tsx). Three kinds:
+ * - text (default): a quiet fade with a short drift, so copy settles rather than flies in;
+ * - cards (`data-card`): the stronger slide, one card after another;
+ * - photos (`data-media`): a wipe from their side while the picture settles from a slight zoom.
+ */
+[data-inview='off'] [data-slide],
+[data-inview='off'][data-slide] {
+  opacity: 0;
+}
+[data-inview='on'] [data-slide],
+[data-inview='on'][data-slide] {
+  animation: text-in-left 1100ms cubic-bezier(0.16, 1, 0.3, 1) var(--slide-delay, 0ms) both;
+}
+[data-inview='on'] [data-slide='right'],
+[data-inview='on'][data-slide='right'] {
+  animation-name: text-in-right;
+}
+[data-inview='on'] [data-slide='up'],
+[data-inview='on'][data-slide='up'] {
+  animation-name: text-in-up;
+}
+
+[data-inview='on'] [data-slide][data-card],
+[data-inview='on'][data-slide][data-card] {
+  animation: card-in-left 900ms cubic-bezier(0.22, 1, 0.36, 1) var(--slide-delay, 0ms) both;
+}
+[data-inview='on'] [data-slide='right'][data-card],
+[data-inview='on'][data-slide='right'][data-card] {
+  animation-name: card-in-right;
+}
+[data-inview='on'] [data-slide='up'][data-card],
+[data-inview='on'][data-slide='up'][data-card] {
+  animation-name: card-in-up;
+}
+
+[data-inview='on'] [data-slide][data-media],
+[data-inview='on'][data-slide][data-media] {
+  animation: media-in-left 1200ms cubic-bezier(0.6, 0, 0.2, 1) var(--slide-delay, 0ms) both;
+}
+[data-inview='on'] [data-slide='right'][data-media],
+[data-inview='on'][data-slide='right'][data-media] {
+  animation-name: media-in-right;
+}
+[data-inview='on'] [data-slide='up'][data-media],
+[data-inview='on'][data-slide='up'][data-media] {
+  animation-name: media-in-up;
+}
+
+@keyframes text-in-left {
+  from { opacity: 0; transform: translateX(-20px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes text-in-right {
+  from { opacity: 0; transform: translateX(20px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes text-in-up {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes card-in-left {
+  from { opacity: 0; transform: translateX(-48px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes card-in-right {
+  from { opacity: 0; transform: translateX(48px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes card-in-up {
+  from { opacity: 0; transform: translateY(40px); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes media-in-left {
+  from { opacity: 1; clip-path: inset(0 100% 0 0); transform: scale(1.04); }
+  to { opacity: 1; clip-path: inset(0 0 0 0); transform: none; }
+}
+@keyframes media-in-right {
+  from { opacity: 1; clip-path: inset(0 0 0 100%); transform: scale(1.04); }
+  to { opacity: 1; clip-path: inset(0 0 0 0); transform: none; }
+}
+@keyframes media-in-up {
+  from { opacity: 1; clip-path: inset(100% 0 0 0); transform: scale(1.04); }
+  to { opacity: 1; clip-path: inset(0 0 0 0); transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn,
+  .btn::before,
+  .btn-morph,
+  .btn-morph-label,
+  .btn-morph-arrow {
+    transition-duration: 1ms !important;
+  }
+  .btn:hover,
+  .btn:active {
+    translate: none !important;
+    scale: none !important;
+  }
+  .btn .btn-arrow {
+    animation: none !important;
+  }
+  .link-sweep,
+  .link-sweep::after,
+  .icon-lift {
+    transition-duration: 1ms !important;
+  }
+  .link-nudge:hover,
+  .icon-lift:hover,
+  .icon-lift:active {
+    translate: none !important;
+    scale: none !important;
+  }
+  [data-reveal],
+  [data-reveal-items] > *,
+  [data-slide] {
+    opacity: 1 !important;
+    animation: none !important;
+  }
+
+  html {
+    scroll-behavior: auto;
+  }
+  .pt-out {
+    display: none;
+  }
+  .pt-in *,
+  .pt-out * {
+    animation: none !important;
+  }
+}
