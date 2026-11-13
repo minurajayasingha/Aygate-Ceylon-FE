@@ -9,9 +9,16 @@ import { ExportPage } from './pages/ExportPage'
 import { AboutPage } from './pages/AboutPage'
 import { ContactPage } from './pages/ContactPage'
 import { DesignSystemPage } from './pages/DesignSystemPage'
+import { LoginPage } from './pages/LoginPage'
+import { RegisterPage } from './pages/RegisterPage'
+import { AccountPage } from './pages/account/AccountPage'
+import { CheckoutPage } from './pages/CheckoutPage'
+import { SearchOverlay } from './components/shop/SearchOverlay'
+import { CartDrawer } from './components/shop/CartDrawer'
 
 export default function App() {
   return (
+    <>
     <PageTransition>
       {(location) => (
         <Routes location={location}>
@@ -23,10 +30,18 @@ export default function App() {
             <Route path="export-services" element={<ExportPage />} />
             <Route path="about" element={<AboutPage />} />
             <Route path="contact" element={<ContactPage />} />
+            <Route path="login" element={<LoginPage />} />
+            <Route path="register" element={<RegisterPage />} />
+            <Route path="account" element={<AccountPage />} />
+            <Route path="checkout" element={<CheckoutPage />} />
           </Route>
           <Route path="design-system" element={<DesignSystemPage />} />
         </Routes>
       )}
     </PageTransition>
+    {/* Rendered once, outside the page layers, so they survive page changes. */}
+    <SearchOverlay />
+    <CartDrawer />
+    </>
   )
 }

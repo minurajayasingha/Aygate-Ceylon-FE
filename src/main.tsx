@@ -13,6 +13,8 @@ import '@fontsource/dm-sans/700.css'
 import './index.css'
 import App from './App'
 import { startSmoothScroll } from './lib/smoothScroll'
+import { AuthProvider } from './lib/auth'
+import { ShopProvider } from './lib/shop'
 
 // The design has fixed 1440px (desktop) and 402px (mobile) frames. Screens slightly
 // smaller than a frame scale it down evenly, so the layout stays exactly as designed.
@@ -28,7 +30,11 @@ startSmoothScroll()
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <BrowserRouter>
-      <App />
+      <AuthProvider>
+        <ShopProvider>
+          <App />
+        </ShopProvider>
+      </AuthProvider>
     </BrowserRouter>
   </StrictMode>,
 )

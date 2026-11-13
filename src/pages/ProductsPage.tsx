@@ -1,5 +1,7 @@
 import { useMemo, useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { catalogue, productFilters, type Product } from '../data/content'
+import { findProduct } from '../data/shop'
 import { BarDots, FilterChip, Icon, SlideIn, TypedHeading } from '../components/ui'
 import { Hero } from '../components/sections/Hero'
 import { ProductCard, ProductCardCompact } from '../components/sections/ProductCard'
@@ -27,12 +29,15 @@ function ProductGroup({ title, products, topClass }: { title: string; products: 
 
 export function ProductsPage() {
   const [filter, setFilter] = useState(0)
-  const [search, setSearch] = useState('')
+  const [params] = useSearchParams()
+  const [search, setSearch] = useState(params.get('q') ?? '')
   const label = productFilters[filter]
 
   const match = (products: Group, group: string): Group => {
     const shown = label === group || !['Cinnamon', 'Pepper'].includes(label)
-    const keep = (list: Product[]) => (shown ? list.filter((p) => p.name.toLowerCase().includes(search.trim().toLowerCase())) : [])
+    const words = search.trim().toLowerCase().split(/\s+/).filter(Boolean)
+    const text = (p: Product) => { const s = findProduct(p.slug); return `${p.name} ${s?.name ?? ''} ${s?.keywords ?? ''} ${p.category}`.toLowerCase() }
+    const keep = (list: Product[]) => (shown ? list.filter((p) => words.every((w) => text(p).includes(w))) : [])
     return { desktop: keep(products.desktop), mobile: keep(products.mobile) }
   }
 
@@ -80,7 +85,7 @@ export function ProductsPage() {
 
       <div className="mx-auto max-w-[1440px] px-[62px] pt-[45px] pb-[13px] max-lg:px-[18px] max-lg:pt-[11px] max-lg:pb-[53px]">
         <ProductGroup title="Cinnamon Products" products={cinnamon} topClass="" />
-        <ProductGroup title="Pepper Products" products={pepper} topClass="mt-[20px] max-lg:mt-[33px] [&>div]:lg:!mt-[20px]" />
+        <ProductGroup title="Pepper & Spices" products={pepper} topClass="mt-[20px] max-lg:mt-[33px] [&>div]:lg:!mt-[20px]" />
       </div>
 
       <JoinSection wide />

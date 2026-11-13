@@ -2,11 +2,21 @@ import { useEffect, useState } from 'react'
 import { Link, NavLink, useLocation } from 'react-router-dom'
 import { navLinks } from '../../data/content'
 import { Icon, Logo } from '../ui'
+import { useAuth } from '../../lib/auth'
+import { useShop } from '../../lib/shop'
+import { CountBadge } from '../shop/ShopBits'
+
+// Pages without a photo hero get the dark header.
+const creamPages = ['/products/', '/login', '/register', '/account', '/checkout']
 
 export function Header() {
   const { pathname } = useLocation()
   const [open, setOpen] = useState(false)
-  const onCream = pathname.startsWith('/products/')
+  const { user } = useAuth()
+  const { cartCount, saved, openDrawer, setSearchOpen } = useShop()
+  const onCream = creamPages.some((p) => pathname.startsWith(p))
+  const accountTo = user ? '/account' : '/login'
+  const accountLabel = user ? 'My account' : 'Sign in'
   const text = onCream ? 'text-ink' : 'text-white'
 
   useEffect(() => {
@@ -31,9 +41,13 @@ export function Header() {
         </nav>
 
         <div className={`absolute top-[83px] right-[68px] flex items-center gap-[23px] max-lg:top-[34px] max-lg:right-[16px] max-lg:gap-[17px] max-lg:[&_path]:stroke-[1.4] ${onCream ? 'max-lg:text-gold' : ''}`}>
-          <button type="button" aria-label="Search" className="icon-lift hover:text-gold"><Icon name="search" size={20} className="max-lg:!size-[21px]" /></button>
-          <button type="button" aria-label="Cart" className="icon-lift hover:text-gold"><Icon name="cart" size={20} className="max-lg:!size-[21px]" /></button>
-          <button type="button" aria-label="Wishlist" className="icon-lift hover:text-gold"><Icon name="heart" size={16} className="max-lg:!size-[21px]" /></button>
+          <button type="button" aria-label="Search products" onClick={() => setSearchOpen(true)} className="icon-lift hover:text-gold"><Icon name="search" size={20} className="max-lg:!size-[21px]" /></button>
+          <button type="button" aria-label={`Cart, ${cartCount} item${cartCount === 1 ? '' : 's'}`} onClick={() => openDrawer('cart')} className="icon-lift relative hover:text-gold"><Icon name="cart" size={20} className="max-lg:!size-[21px]" /><CountBadge count={cartCount} /></button>
+          <button type="button" aria-label={`Saved products, ${saved.length}`} onClick={() => openDrawer('saved')} className="icon-lift relative hover:text-gold"><Icon name={saved.length ? 'heart-filled' : 'heart'} size={16} className="max-lg:!size-[21px]" /><CountBadge count={saved.length} /></button>
+          <Link to={accountTo} aria-label={accountLabel} title={accountLabel} className="icon-lift relative hover:text-gold">
+            <Icon name="user" size={20} className="max-lg:!size-[21px]" />
+            {user && <span className="absolute -top-[2px] -right-[3px] size-[7px] rounded-full bg-gold" />}
+          </Link>
           {/* Mobile only: desktop already shows the nav links. */}
           <button type="button" aria-label="Menu" aria-expanded={open} onClick={() => setOpen((v) => !v)} className="icon-lift hover:text-gold lg:hidden"><Icon name="menu" size={21} /></button>
         </div>
@@ -44,6 +58,9 @@ export function Header() {
           {navLinks.map(({ label, to }) => (
             <Link key={label} to={to} onClick={() => setOpen(false)} className="link-nudge block py-2 text-p2 transition-[color,translate] duration-300 hover:text-gold">{label}</Link>
           ))}
+          <Link to={accountTo} onClick={() => setOpen(false)} className="link-nudge mt-2 flex items-center gap-2 border-t border-gold/30 pt-3 text-p2 font-medium text-gold-deep transition-[color,translate] duration-300 hover:text-gold">
+            <Icon name="user" size={18} />{user ? 'My Account' : 'Sign In / Register'}
+          </Link>
         </nav>
       )}
     </header>

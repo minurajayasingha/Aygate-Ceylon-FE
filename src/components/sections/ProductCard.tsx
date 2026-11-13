@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 import type { Product } from '../../data/content'
 import { productForms, productQualities } from '../../data/content'
 import { Icon, Tag } from '../ui'
+import { SaveButton } from '../shop/ShopBits'
 
 // Tall cards add a tag row: forms on Home, qualities on the Products page.
 const tagRows = {
@@ -25,6 +26,7 @@ export function ProductCard({ product, tags, framed, className = '' }: Props) {
   return (
     <article className={`group relative overflow-hidden rounded-card border border-gold bg-cream shadow-card transition-shadow duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] hover:shadow-[0_8px_14px_rgb(0_0_0/0.1)] ${showForms ? 'h-[461px]' : 'h-[423px]'} ${className}`} style={{ backgroundImage: `url(/images/${cardBg(showForms)}.webp)`, backgroundSize: '100% 100%', backgroundOrigin: 'border-box' }}>
       <img src={`/images/${product.image}.webp`} alt={product.name} loading="lazy" className={`${imgBase} ${framed ? imgFramed : imgNormal}`} />
+      <SaveButton slug={product.slug} name={product.name} className="absolute top-[18px] right-[18px] z-10 size-[36px]" />
       <h3 className="absolute top-[258px] left-[16px] font-serif text-h3 font-semibold whitespace-nowrap">{product.name}</h3>
       <span className="absolute top-[292px] left-[21px] h-[2px] w-[33px] bg-gold" />
       <p className="absolute top-[303px] left-[17px] w-[279px] max-w-[calc(100%-30px)] text-p6 font-light">{product.description}</p>
@@ -46,6 +48,7 @@ export function ProductCardCompact({ product }: { product: Product }) {
   return (
     <article className="relative h-[246px] overflow-hidden rounded-card border border-gold bg-cream" style={{ backgroundImage: 'url(/images/card-bg-m.webp)', backgroundSize: '100% 100%', backgroundOrigin: 'border-box' }}>
       <img src={`/images/${product.image}.webp`} alt={product.name} loading="lazy" className="absolute top-[4px] left-[4px] h-[134px] w-[calc(100%-10px)] rounded-panel object-cover" />
+      <SaveButton slug={product.slug} name={product.name} size={13} className="absolute top-[10px] right-[10px] z-10 size-[28px]" />
       <h3 className="absolute top-[150px] left-[18px] font-serif text-h4 font-semibold whitespace-nowrap">{product.name}</h3>
       <span className="absolute top-[172px] left-[20px] h-px w-[19px] bg-gold" />
       <p className="absolute top-[179px] left-[18px] w-[160px] text-[8px] leading-[10.3px] font-light">{product.description}</p>

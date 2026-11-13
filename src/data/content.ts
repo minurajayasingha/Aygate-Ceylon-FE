@@ -1,22 +1,35 @@
+import { findProduct, shopProducts } from './shop'
+
 // All page copy and data lives here. Text is word for word from Figma, so replacing a placeholder only takes one edit.
 
-export const navLinks = [
+// Set `hidden: true` to take a link out of the header and footer; remove it to bring the link back.
+// Markets is hidden until that page is ready (requested 2026-11-13).
+const HIDE_MARKETS = true
+
+const allNavLinks = [
   { label: 'Home', to: '/', left: 0 },
   { label: 'Products', to: '/products', left: 88 },
   { label: 'Quality', to: '/quality', left: 199 },
   { label: 'Export Services', to: '/export-services', left: 295 },
   { label: 'About', to: '/about', left: 458 },
-  { label: 'Markets', to: '#', left: 547 },
+  { label: 'Markets', to: '#', left: 547, hidden: HIDE_MARKETS },
   { label: 'Contact Us', to: '/contact', left: 651 },
 ]
+
+// Desktop links sit at fixed Figma positions, so links after a hidden one move left by its slot width.
+export const navLinks = allNavLinks.flatMap((link, i) => {
+  if (link.hidden) return []
+  const shift = allNavLinks.slice(0, i).reduce((n, l, j) => (l.hidden ? n + allNavLinks[j + 1].left - l.left : n), 0)
+  return [{ label: link.label, to: link.to, left: link.left - shift }]
+})
 
 export const footerColumns = {
   explore: [
     { label: 'Products', to: '/products' },
     { label: 'Quality', to: '/quality' },
     { label: 'Export Services', to: '/export-services' },
-    { label: 'Markets', to: '#' },
-  ],
+    { label: 'Markets', to: '#', hidden: HIDE_MARKETS },
+  ].filter((l) => !l.hidden),
   products: [
     { label: 'Cinnamon', to: '/products' },
     { label: 'Pepper', to: '/products' },
@@ -24,7 +37,7 @@ export const footerColumns = {
   ],
   contact: [
     { label: 'Request a Quote', to: '/contact' },
-    { label: 'My Account', to: '#' },
+    { label: 'My Account', to: '/account' },
     { label: 'My Cart', to: '#' },
   ],
 }
@@ -38,33 +51,25 @@ export const stats = [
   { icon: 'documents', iconSize: 34, label: 'Documentation', value: 'Available on request' },
 ]
 
-const blurb = 'True Ceylon cinnamon in selected grades and forms for food, beverage and ingredient applications.'
+// Cards show products from the retail catalogue (src/data/shop.ts), so each card links, saves and searches as its own product.
+export type Product = { slug: string; name: string; image: string; description: string; category: string }
 
-export type Product = { slug: string; name: string; image: string; description: string; category: 'cinnamon' | 'pepper' }
+const cardOf = (slug: string): Product => {
+  const p = findProduct(slug)!
+  return { slug: p.slug, name: p.short, image: p.image, description: p.description, category: p.category.toLowerCase() }
+}
 
-export const homeProducts: Product[] = [
-  { slug: 'ceylon-cinnamon-quills', name: 'Cinnamon', image: 'product-cinnamon', description: blurb, category: 'cinnamon' },
-  { slug: 'ceylon-cinnamon-quills', name: 'Pepper', image: 'product-pepper', description: blurb, category: 'pepper' },
-  { slug: 'ceylon-cinnamon-quills', name: 'Pepper', image: 'product-cardamom', description: blurb, category: 'pepper' },
-  { slug: 'ceylon-cinnamon-quills', name: 'Pepper', image: 'product-cloves', description: blurb, category: 'pepper' },
-]
+export const homeProducts: Product[] = ['ceylon-cinnamon-quills', 'black-pepper', 'green-cardamom', 'ceylon-cloves'].map(cardOf)
 
-export const cinnamonProducts: Product[] = ['Cinnamon Quills', 'Cinnamon', 'Cinnamon', 'Cinnamon'].map((name) => ({
-  slug: 'ceylon-cinnamon-quills', name, image: 'product-cinnamon', description: blurb, category: 'cinnamon',
-}))
+export const cinnamonProducts: Product[] = ['ceylon-cinnamon-quills', 'ceylon-cinnamon-powder', 'ceylon-cinnamon-chips', 'cinnamon-cut-sticks'].map(cardOf)
 
-const card = (name: string, image: string, category: Product['category']): Product => ({ slug: 'ceylon-cinnamon-quills', name, image, description: blurb, category })
+export const otherProducts = (slug: string) => shopProducts.filter((p) => p.slug !== slug).slice(0, 4).map((p) => cardOf(p.slug))
 
-// Products page. Figma changed the desktop cards on Nov 5 but not the mobile ones, so each keeps its own list.
+// Products page groups.
+const pepperAndSpices = ['black-pepper', 'white-pepper', 'green-cardamom', 'ceylon-cloves'].map(cardOf)
 export const catalogue = {
-  cinnamon: {
-    desktop: [1, 2, 3, 4].map(() => card('Cinnamon Quills', 'product-cinnamon', 'cinnamon')),
-    mobile: [1, 2, 3, 4].map(() => card('Cinnamon', 'product-cinnamon', 'cinnamon')),
-  },
-  pepper: {
-    desktop: [card('Pepper', 'product-pepper', 'pepper'), card('Pepper', 'product-pepper', 'pepper'), card('Cinnamon Quills', 'product-cinnamon', 'pepper'), card('Cinnamon Quills', 'product-cinnamon', 'pepper')],
-    mobile: [1, 2, 3, 4].map(() => card('Pepper', 'product-pepper', 'pepper')),
-  },
+  cinnamon: { desktop: cinnamonProducts, mobile: cinnamonProducts },
+  pepper: { desktop: pepperAndSpices, mobile: pepperAndSpices },
 }
 
 export const productForms = ['Quills', 'Chips', 'Powder']
@@ -147,3 +152,44 @@ export const detailBody = 'True Ceylon cinnamon with a delicate aroma, sweet fla
 export const quantityOptions = ['200kg']
 export const inquiryOptions = ['Quote']
 export const productOptions = ['Select']
+
+// Login, registration and account. Not in Figma; written to match the site's tone. Inquiries are sample rows until the backend exists.
+export const authCopy = {
+  login: {
+    eyebrow: 'Buyer Account',
+    title: 'Welcome Back',
+    body: 'Sign in to follow your quote requests, sample orders and saved products.',
+    asideEyebrow: 'Aygate Ceylon',
+    asideTitle: 'Nothing but the best, from Sri Lanka to your market.',
+  },
+  register: {
+    eyebrow: 'Join Aygate Ceylon',
+    title: 'Create Your Account',
+    body: 'Register as a buyer to request quotes faster, track samples and keep your sourcing details in one place.',
+    asideEyebrow: 'Why register',
+    asideTitle: 'One place for every inquiry and shipment.',
+  },
+  benefits: ['Track quote and sample requests', 'Save products for your next order', 'Faster repeat inquiries'],
+}
+
+export const buyerTypes = ['Importer', 'Distributor', 'Wholesaler', 'Retailer', 'Private label brand', 'Food manufacturer', 'Other']
+
+export type InquiryStatus = 'Under Review' | 'Quoted' | 'Sample Sent' | 'Shipped' | 'Closed'
+export type Inquiry = { ref: string; product: string; type: string; quantity: string; destination: string; date: string; status: InquiryStatus }
+
+export const sampleInquiries: Inquiry[] = [
+  { ref: 'AYG-1042', product: 'Ceylon Cinnamon Quills · H1', type: 'Quote', quantity: '200kg', destination: 'Dubai, UAE', date: '08 Nov 2026', status: 'Under Review' },
+  { ref: 'AYG-1037', product: 'Black Pepper · Whole', type: 'Sample', quantity: '1kg', destination: 'Hamburg, Germany', date: '29 Oct 2026', status: 'Sample Sent' },
+  { ref: 'AYG-1029', product: 'Cinnamon Powder', type: 'Private Label', quantity: '500kg', destination: 'Toronto, Canada', date: '14 Oct 2026', status: 'Quoted' },
+  { ref: 'AYG-1011', product: 'Ceylon Cinnamon Quills · C5', type: 'Bulk', quantity: '1,000kg', destination: 'Rotterdam, Netherlands', date: '22 Sep 2026', status: 'Shipped' },
+]
+
+export const accountTabs = [
+  { id: 'overview', label: 'Overview', icon: 'leaf' },
+  { id: 'orders', label: 'My Orders', icon: 'box' },
+  { id: 'inquiries', label: 'Bulk Inquiries', icon: 'documents' },
+  { id: 'saved', label: 'Saved Products', icon: 'heart' },
+  { id: 'addresses', label: 'Addresses', icon: 'location' },
+  { id: 'payments', label: 'Payment Methods', icon: 'card' },
+  { id: 'profile', label: 'Profile', icon: 'user' },
+] as const

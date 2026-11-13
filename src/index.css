@@ -228,6 +228,19 @@ body {
   }
 }
 
+/* Shop overlays (search, cart drawer) and the save heart. */
+@keyframes fade-in {
+  from { opacity: 0; }
+}
+@keyframes drawer-in {
+  from { transform: translateX(100%); }
+}
+@keyframes heart-pop {
+  0% { scale: 0.6; }
+  60% { scale: 1.25; }
+  100% { scale: 1; }
+}
+
 @keyframes btn-arrow {
   0% {
     transform: none;
@@ -501,6 +514,10 @@ body {
   [data-reveal-items] > *,
   [data-slide] {
     opacity: 1 !important;
+    animation: none !important;
+  }
+
+  [class*='animate-['] {
     animation: none !important;
   }
 

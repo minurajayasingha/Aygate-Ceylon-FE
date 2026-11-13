@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react'
+import type { ComponentProps, ReactNode } from 'react'
 import { useId } from 'react'
 import { Icon } from './Icon'
 
@@ -27,11 +27,15 @@ function Label({ id, label, className = '', children }: { id: string; label: str
   )
 }
 
-export function TextField({ label, name, placeholder, type = 'text', highlighted, glass, labelClassName, className = '' }: Common & { placeholder?: string; type?: string }) {
+// Extra input props (value, required, autoComplete...) pass straight to the <input>; `trailing` sits inside its right edge.
+export function TextField({ label, name, type = 'text', highlighted, glass, labelClassName, className = '', trailing, ...rest }: Common & Omit<ComponentProps<'input'>, 'className' | 'name'> & { trailing?: ReactNode }) {
   const id = useId()
   return (
     <Label id={id} label={label} className={labelClassName}>
-      <input id={id} name={name ?? label} type={type} placeholder={placeholder} className={`${control(highlighted, glass)} h-[45px] px-[21px] ${className}`} />
+      <div className="relative">
+        <input id={id} name={name ?? label} type={type} className={`${control(highlighted, glass)} h-[45px] px-[21px] ${trailing ? 'pr-[52px]' : ''} ${className}`} {...rest} />
+        {trailing && <div className="absolute inset-y-0 right-[14px] flex items-center">{trailing}</div>}
+      </div>
     </Label>
   )
 }
@@ -45,12 +49,12 @@ export function TextArea({ label, name, placeholder, highlighted, glass, labelCl
   )
 }
 
-export function SelectField({ label, name, options, highlighted, glass, labelClassName, className = '', center }: Common & { options: string[]; center?: boolean }) {
+export function SelectField({ label, name, options, highlighted, glass, labelClassName, className = '', center, ...rest }: Common & Omit<ComponentProps<'select'>, 'className' | 'name'> & { options: string[]; center?: boolean }) {
   const id = useId()
   return (
     <Label id={id} label={label} className={labelClassName}>
       <div className="relative">
-        <select id={id} name={name ?? label} className={`${control(highlighted, glass)} h-[45px] appearance-none pr-10 text-placeholder ${center ? 'pl-[40px]' : 'pl-[21px]'} ${className}`}>
+        <select id={id} name={name ?? label} {...rest} className={`${control(highlighted, glass)} h-[45px] appearance-none pr-10 text-placeholder ${center ? 'pl-[40px]' : 'pl-[21px]'} ${className}`}>
           {options.map((o) => <option key={o}>{o}</option>)}
         </select>
         <Icon name="chevron-down" size={16} className="pointer-events-none absolute top-[15px] right-[16px] text-[#c2c2c2]" />
