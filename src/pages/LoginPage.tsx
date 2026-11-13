@@ -5,10 +5,12 @@ import { authCopy } from '../data/content'
 import { useAuth } from '../lib/auth'
 import { Button, TextField } from '../components/ui'
 import { AuthShell, Checkbox, FormError, GoogleButton, OrDivider, usePasswordToggle } from '../components/sections/AuthShell'
+import { pageSeo, useSeo } from '../seo'
 
 const linkClass = 'link-sweep font-medium text-gold-deep hover:text-gold'
 
 export function LoginPage() {
+  useSeo(pageSeo('/login'))
   const { user, signIn, signInWithGoogle } = useAuth()
   const navigate = useNavigate()
   const from = (useLocation().state as { from?: string } | null)?.from ?? '/account'

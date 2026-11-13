@@ -3,6 +3,7 @@ import { BarDots, Button, Dots, Eyebrow, FilterChip, Icon, Logo, OptionChip, Sel
 import { ProductCard, ProductCardCompact } from '../components/sections/ProductCard'
 import { ServiceCard, ServiceCardMobile } from '../components/sections/ServiceCard'
 import { cinnamonProducts, homeServices } from '../data/content'
+import { pageSeo, useSeo } from '../seo'
 
 const colors = [
   ['gold', '#C48C40', 'Primary actions, accents'],
@@ -44,6 +45,7 @@ function Block({ title, note, children }: { title: string; note?: string; childr
 }
 
 export function DesignSystemPage() {
+  useSeo(pageSeo('/design-system'))
   return (
     <main className="mx-auto max-w-[1312px] px-4 py-12 lg:px-0">
       <Eyebrow>Aygate Ceylon</Eyebrow>

@@ -2,8 +2,10 @@ import { exportServices, exportServicesMobile, journeySteps } from '../data/cont
 import { Button, Eyebrow, Icon, SlideIn, TypedHeading } from '../components/ui'
 import { Hero } from '../components/sections/Hero'
 import { ServiceCard, ServiceCardMobile } from '../components/sections/ServiceCard'
+import { pageSeo, useSeo } from '../seo'
 
 export function ExportPage() {
+  useSeo(pageSeo('/export-services'))
   return (
     <>
       <Hero

@@ -8,6 +8,7 @@ import { SaveButton } from '../components/shop/ShopBits'
 import { Button, Eyebrow, Icon, OptionChip, SlideIn, TypedHeading } from '../components/ui'
 import { ProductCard, ProductCardCompact } from '../components/sections/ProductCard'
 import { QuoteModal } from '../components/sections/QuoteModal'
+import { productSeoForSlug, useSeo } from '../seo'
 
 
 function DetailHeading({ children }: { children: string }) {
@@ -53,6 +54,7 @@ function WhyChoose({ name }: { name: string }) {
 
 export function ProductDetailPage() {
   const { slug } = useParams()
+  useSeo(productSeoForSlug(slug))
   const product = findProduct(slug) ?? shopProducts[0]
   const productName = product.name
   const summary = product.summary

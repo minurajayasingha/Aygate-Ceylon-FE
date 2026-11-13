@@ -7,12 +7,14 @@ import { Button, Eyebrow, FilterChip, Icon } from '../../components/ui'
 import { Orders } from './Orders'
 import { Addresses, Inquiries, Overview, Payments, Profile, Saved } from './Sections'
 import { leafPanel, linkClass, panel } from './shared'
+import { pageSeo, useSeo } from '../../seo'
 
 export type Tab = (typeof accountTabs)[number]['id']
 
 const initials = (name: string) => name.split(/\s+/).filter(Boolean).slice(0, 2).map((w) => w[0].toUpperCase()).join('') || 'A'
 
 export function AccountPage() {
+  useSeo(pageSeo('/account'))
   const { user, signOut } = useAuth()
   const navigate = useNavigate()
   const [params, setParams] = useSearchParams()

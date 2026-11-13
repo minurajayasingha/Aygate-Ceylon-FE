@@ -2,8 +2,10 @@ import { qualitySteps, testingList, traceServices } from '../data/content'
 import { Button, Eyebrow, Icon, SlideIn, TypedHeading } from '../components/ui'
 import { Hero } from '../components/sections/Hero'
 import { ServiceCard, ServiceCardMobile } from '../components/sections/ServiceCard'
+import { pageSeo, useSeo } from '../seo'
 
 export function QualityPage() {
+  useSeo(pageSeo('/quality'))
   return (
     <>
       <Hero

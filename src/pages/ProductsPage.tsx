@@ -6,6 +6,7 @@ import { BarDots, FilterChip, Icon, SlideIn, TypedHeading } from '../components/
 import { Hero } from '../components/sections/Hero'
 import { ProductCard, ProductCardCompact } from '../components/sections/ProductCard'
 import { JoinSection } from '../components/sections/JoinSection'
+import { pageSeo, useSeo } from '../seo'
 
 const chipWidths = ['w-[181px]', 'w-[170px]', 'w-[147px]', 'w-[177px]', 'w-[177px]']
 const chipGaps = [13, 13, 26, 26, 38]
@@ -28,6 +29,7 @@ function ProductGroup({ title, products, topClass }: { title: string; products: 
 }
 
 export function ProductsPage() {
+  useSeo(pageSeo('/products'))
   const [filter, setFilter] = useState(0)
   const [params] = useSearchParams()
   const [search, setSearch] = useState(params.get('q') ?? '')

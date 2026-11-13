@@ -8,6 +8,7 @@ import { Button, Eyebrow, Icon } from '../components/ui'
 import { Checkbox, FormError } from '../components/sections/AuthShell'
 import { AddressBlock, AddressFields, CardFields, PaymentCard, readAddress, readCard, SecureNote } from '../components/shop/AccountForms'
 import { QtyStepper } from '../components/shop/ShopBits'
+import { pageSeo, useSeo } from '../seo'
 
 const leafPanel = { backgroundImage: 'url(/images/bg-leaf-panel.webp)', backgroundSize: 'cover' }
 const panel = 'rounded-panel bg-ivory shadow-soft px-[28px] pt-[24px] pb-[28px] max-lg:px-[18px]'
@@ -39,6 +40,7 @@ function Choice({ name, value, checked, onChange, children, className = '' }: { 
 }
 
 export function CheckoutPage() {
+  useSeo(pageSeo('/checkout'))
   const { user } = useAuth()
   const shop = useShop()
   const navigate = useNavigate()

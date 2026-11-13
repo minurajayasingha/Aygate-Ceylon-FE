@@ -5,10 +5,12 @@ import { authCopy, buyerTypes } from '../data/content'
 import { useAuth } from '../lib/auth'
 import { Button, SelectField, TextField } from '../components/ui'
 import { AuthShell, Checkbox, FormError, GoogleButton, OrDivider, usePasswordToggle } from '../components/sections/AuthShell'
+import { pageSeo, useSeo } from '../seo'
 
 const linkClass = 'link-sweep font-medium text-gold-deep hover:text-gold'
 
 export function RegisterPage() {
+  useSeo(pageSeo('/register'))
   const { user, register, signInWithGoogle } = useAuth()
   const navigate = useNavigate()
   const password = usePasswordToggle()

@@ -6,6 +6,7 @@ import { Hero } from '../components/sections/Hero'
 import { ProductCard } from '../components/sections/ProductCard'
 import { ServiceCard, ServiceCardMobile } from '../components/sections/ServiceCard'
 import { JoinSection } from '../components/sections/JoinSection'
+import { pageSeo, useSeo } from '../seo'
 
 const pct = (v: number) => `${(v / 1440) * 100}%`
 
@@ -169,6 +170,7 @@ function ProductCarouselMobile() {
 }
 
 export function HomePage() {
+  useSeo(pageSeo('/'))
   const approach = useReveal<HTMLElement>()
   const families = useReveal<HTMLElement>()
   const proof = useReveal<HTMLElement>()

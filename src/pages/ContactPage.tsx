@@ -2,10 +2,12 @@ import type { FormEvent } from 'react'
 import { contactDetails, inquiryOptions, productOptions, quantityOptions, shareRequirements } from '../data/content'
 import { Button, Eyebrow, Icon, SelectField, SlideIn, TextArea, TextField } from '../components/ui'
 import { Hero } from '../components/sections/Hero'
+import { pageSeo, useSeo } from '../seo'
 
 const prevent = (e: FormEvent) => e.preventDefault()
 
 export function ContactPage() {
+  useSeo(pageSeo('/contact'))
   return (
     <>
       <Hero

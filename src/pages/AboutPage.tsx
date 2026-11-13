@@ -1,6 +1,7 @@
 import { founder } from '../data/content'
 import { Button, Eyebrow, Icon, SlideIn, TypedHeading } from '../components/ui'
 import { Hero } from '../components/sections/Hero'
+import { pageSeo, useSeo } from '../seo'
 
 const peopleNote = 'Founder cards should use real photos, names, roles, short professional bios, LinkedIn and each person’s responsibility.'
 
@@ -16,6 +17,7 @@ const storyLast = {
 }
 
 export function AboutPage() {
+  useSeo(pageSeo('/about'))
   return (
     <>
       <Hero
